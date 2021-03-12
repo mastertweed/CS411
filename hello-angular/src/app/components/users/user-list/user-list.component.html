@@ -1,0 +1,23 @@
+
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>User_ID</th>
+            <th>User_Name</th>
+            <th>Income</th>
+            <th>City</th>
+            <th>Age</th>
+            <th>Password</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let user of users">
+            <td>{{user.user_id}}</td>
+            <td>{{user.user_name}}</td>
+            <td>{{user.income}}</td>
+            <td>{{user.city}}</td>
+            <td>{{user.age}}</td>
+            <td>{{user.password}}</td>
+        </tr>
+    </tbody>
+</table>

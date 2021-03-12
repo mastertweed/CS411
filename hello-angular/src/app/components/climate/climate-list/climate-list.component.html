@@ -1,0 +1,22 @@
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>city_id</th>
+            <th>city_name</th>
+            <th>humidity</th>
+            <th>min_temp</th>
+            <th>max_temp</th>
+            <th>avg_rainfall</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let climate of climates">
+            <td>{{climate.city_id}}</td>
+            <td>{{climate.city_name}}</td>
+            <td>{{climate.humidity}}</td>
+            <td>{{climate.min_temp}}</td>
+            <td>{{climate.max_temp}}</td>
+            <td>{{climate.avg_rainfall}}</td>
+        </tr>
+    </tbody>
+</table>

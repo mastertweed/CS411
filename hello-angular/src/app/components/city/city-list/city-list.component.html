@@ -1,0 +1,20 @@
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>City_ID</th>
+            <th>City_Name</th>
+            <th>Median Age</th>
+            <th>Population</th>
+            <th>Median Income</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let city of citys">
+            <td>{{city.city_id}}</td>
+            <td>{{city.city_name}}</td>
+            <td>{{city.median_income}}</td>
+            <td>{{city.population}}</td>
+            <td>{{city.median_age}}</td>
+        </tr>
+    </tbody>
+</table>
