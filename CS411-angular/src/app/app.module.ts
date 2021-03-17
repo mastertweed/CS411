@@ -10,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table';
+import {MatToolbarModule} from '@angular/material/toolbar'
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,6 +23,8 @@ import { IncentivesListComponent } from './components/incentives/incentives-list
 import { LocationListComponent } from './components/location/location-list/location-list.component';
 import { PrefersListComponent } from './components/prefers/prefers-list/prefers-list.component';
 import { PreferenceFormComponent } from './components/preference-form/preference-form.component';
+import { HeaderComponent } from './components/header/header.component';
+
 
 
 @NgModule({
@@ -35,7 +38,8 @@ import { PreferenceFormComponent } from './components/preference-form/preference
     IncentivesListComponent,
     LocationListComponent,
     PrefersListComponent,
-    PreferenceFormComponent
+    PreferenceFormComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
@@ -47,7 +51,8 @@ import { PreferenceFormComponent } from './components/preference-form/preference
     MatExpansionModule,
     FormsModule,
     HttpClientModule,
-    MatTableModule
+    MatTableModule,
+    MatToolbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
