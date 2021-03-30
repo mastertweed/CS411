@@ -2,7 +2,26 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 const db = require('./queries')
-const port = 3000
+// const port = 3000
+
+const normalizePort = val => {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+};
+
+const port = normalizePort(process.env.PORT || "3000");
+app.set("port", port);
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin','*');
@@ -34,17 +53,19 @@ app.get('/users/:id', db.getUserById)
 // app.put('/users/:id', db.updateUser)
 // app.delete('/users/:id', db.deleteUser)
 
-app.get('/locations', db.getLocations)
-
 app.get('/city', db.getCity)
+app.get('/zipcodes', db.getZipCodes)
+app.get('/states', db.getStates)
+app.get('/temperature', db.getTemperature)
+app.get('/rainfall', db.getRainfall)
 
-app.get('/climate', db.getClimate)
+app.get('/census', db.getCensus)
+app.get('/incometax', db.getIncomeTax)
+app.get('/standardded', db.getStandardDed)
 
-app.get('/housing', db.getHousing)
-
-app.get('/incentives', db.getIncentives)
-
-app.get('/prefers', db.getPrefers)
+// app.get('/housing', db.getHousing)
+// app.get('/incentives', db.getIncentives)
+// app.get('/prefers', db.getPrefers)
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)

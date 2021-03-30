@@ -1,13 +1,15 @@
 const Pool = require('pg').Pool
 const pool = new Pool({
-  user: 'me',
-  host: 'localhost',
-  database: 'api',
-  password: 'password',
+  user: 'postgres',
+  host: 'cs411-postgres-1.cwg7ctu1vqsd.us-east-1.rds.amazonaws.com',
+  // database: 'cs411-postgres-1',
+  database: 'postgres',
+  password: 'postgrespassword',
   port: 5432,
 })
 
 // USERS Functions
+//
 const getUsers = (request, response) => {
   pool.query('SELECT * FROM users ORDER BY user_id ASC', (error, results) => {
     if (error) {
@@ -66,17 +68,8 @@ const deleteUser = (request, response) => {
   })
 }
 
-// LOCATIONS Functions
-const getLocations = (request, response) => {
-  pool.query('SELECT * FROM locations ORDER BY state_id ASC', (error, results) => {
-    if (error) {
-      throw error
-    }
-    response.status(200).json(results.rows)
-  })
-}
-
 // CITY Functions
+//
 const getCity = (request, response) => {
   pool.query('SELECT * FROM city ORDER BY city_id ASC', (error, results) => {
     if (error) {
@@ -86,9 +79,76 @@ const getCity = (request, response) => {
   })
 }
 
-// CLIMATE Functions
-const getClimate = (request, response) => {
-  pool.query('SELECT * FROM climate ORDER BY city_id ASC', (error, results) => {
+// ZIPCODES Functions
+//
+const getZipCodes = (request, response) => {
+  pool.query('SELECT * FROM zipcodes', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+// STATES Functions
+//
+const getStates = (request, response) => {
+  pool.query('SELECT * FROM states', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+// TEMPERATURE Functions
+//
+const getTemperature = (request, response) => {
+  pool.query('SELECT * FROM temperature', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+// RAINFALL Functions
+//
+const getRainfall = (request, response) => {
+  pool.query('SELECT * FROM rainfall', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+// CENSUS Functions
+//
+const getCensus = (request, response) => {
+  pool.query('SELECT * FROM census', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+// INCOMETAX Functions
+//
+const getIncomeTax = (request, response) => {
+  pool.query('SELECT * FROM incometax', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+// STANDARDDED Functions
+//
+const getStandardDed = (request, response) => {
+  pool.query('SELECT * FROM standardded', (error, results) => {
     if (error) {
       throw error
     }
@@ -97,6 +157,7 @@ const getClimate = (request, response) => {
 }
 
 // HOUSING Functions
+//
 const getHousing = (request, response) => {
   pool.query('SELECT * FROM housing ORDER BY county_id ASC', (error, results) => {
     if (error) {
@@ -107,6 +168,7 @@ const getHousing = (request, response) => {
 }
 
 // INCENTIVES Functions
+//
 const getIncentives = (request, response) => {
   pool.query('SELECT * FROM incentives ORDER BY city_id ASC', (error, results) => {
     if (error) {
@@ -117,6 +179,7 @@ const getIncentives = (request, response) => {
 }
 
 // PREFERS Functions
+//
 const getPrefers = (request, response) => {
   pool.query('SELECT * FROM prefers ORDER BY user_id ASC', (error, results) => {
     if (error) {
@@ -132,9 +195,14 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
-  getLocations,
   getCity,
-  getClimate,
+  getZipCodes,
+  getStates,
+  getTemperature,
+  getRainfall,
+  getCensus,
+  getIncomeTax,
+  getStandardDed,
   getHousing,
   getIncentives,
   getPrefers
