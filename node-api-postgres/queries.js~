@@ -1,19 +1,17 @@
 const Pool = require('pg').Pool
 const pool = new Pool({
   user: 'postgres',
-//  host: 'cs411-postgres-1.cwg7ctu1vqsd.us-east-1.rds.amazonaws.com',
-//  database: 'postgres',
-//  password: 'postgrespassword',
-  host: 'localhost',
-  database: 'api',
-  password: 'password',
+  host: 'cs411-postgres-1.cwg7ctu1vqsd.us-east-1.rds.amazonaws.com',
+  // database: 'cs411-postgres-1',
+  database: 'postgres',
+  password: 'postgrespassword',
   port: 5432,
 })
 
 // USERS Functions
 //
 const getUsers = (request, response) => {
-  pool.query('SELECT * FROM users ORDER BY email ASC', (error, results) => {
+  pool.query('SELECT * FROM users ORDER BY user_id ASC', (error, results) => {
     if (error) {
       throw error
     }
@@ -22,7 +20,7 @@ const getUsers = (request, response) => {
 }
 
 const getUserByEmail = (request, response) => {
-  const email = request.params.email
+  const email = parseInt(request.params.email)
 
   pool.query('SELECT * FROM users WHERE email = $1', [email], (error, results) => {
     if (error) {
@@ -39,34 +37,34 @@ const createUser = (request, response) => {
     if (error) {
       throw error
     }
-    response.status(201).send('User added!')
+    response.status(201).send('User added with ID: ${result.insertId}')
   })
 }
 
 const updateUser = (request, response) => {
-  const email = request.params.email
-  const { email_updated, password } = request.body
+  const email = parseInt(request.params.email)
+  const { email, password } = request.body
 
   pool.query(
-    'UPDATE users SET email = $1, password = $2 WHERE email = $3',
-    [email_updated, password, email],
+    'UPDATE users SET email = $1, password = $2 WHERE email = $6',
+    [email, password, email],
     (error, results) => {
       if (error) {
         throw error
       }
-      response.status(200).send('User modified with Email: ${email}')
+      response.status(200).send('User modified with Email: ${insertId}')
     }
   )
 }
 
 const deleteUser = (request, response) => {
-  const email = request.params.email
+  const email = parseInt(request.params.email)
 
   pool.query('DELETE FROM users WHERE email = $1', [email], (error, results) => {
     if (error) {
       throw error
     }
-    response.status(200).send('User deleted with Email: ${email}')
+    response.status(200).send('User deleted with Email: ${insertId}')
   })
 }
 
@@ -86,8 +84,7 @@ const createUserInfo = (request, response) => {
 
   pool.query('INSERT INTO users(email, maxdist, maxcost, avgcost,' 
   	  + 'avgage, bedrooms1, bedrooms2, bedrooms3, bedrooms4, bedrooms5,'
-  	  + 'bedrooms6, mintemp, maxtemp) VALUES ($1, $2, $3, $4, $5, $6, $7,'
-  	  + '$8, $9, $10, $11, $12, $13)', [email, maxdist, maxcost, avgcost, avgage, bedrooms1, bedrooms2, bedrooms3, bedrooms4, bedrooms5, bedrooms6, mintemp, maxtemp], (error, results) => {
+  	  + 'bedrooms6, mintemp, maxtemp) VALUES ($1, $2)', [email, maxdist, maxcost, avgcost, avgage, bedrooms1, bedrooms2, bedrooms3, bedrooms4, bedrooms5, bedrooms6, mintemp, maxtemp], (error, results) => {
     if (error) {
       throw error
     }
@@ -97,7 +94,7 @@ const createUserInfo = (request, response) => {
 
 // USERPREFERENCE Functions
 //
-const getUserPreference = (request, response) => {
+const getUserInfo = (request, response) => {
   pool.query('SELECT * FROM userpreference ORDER BY email ASC', (error, results) => {
     if (error) {
       throw error
@@ -230,12 +227,10 @@ const getPrefers = (request, response) => {
 
 module.exports = {
   getUsers,
-  getUserByEmail,
+  getUserById,
   createUser,
   updateUser,
   deleteUser,
-  getUserInfo,
-  createUserInfo,
   getCity,
   getZipCodes,
   getStates,
