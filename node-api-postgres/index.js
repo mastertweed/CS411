@@ -66,7 +66,13 @@ app.get('/census', db.getCensus)
 app.get('/incometax', db.getIncomeTax)
 app.get('/standardded', db.getStandardDed)
 
-// app.get('/housing', db.getHousing)
+app.get('/onebedroomprice', db.getOneBedroomPrice)
+app.get('/twobedroomprice', db.getTwoBedroomPrice)
+app.get('/threebedroomprice', db.getThreeBedroomPrice)
+app.get('/fourbedroomprice', db.getFourBedroomPrice)
+app.get('/fivemorebedroomprice', db.getFiveMoreBedroomPrice)
+app.get('/singlefamilyresidenceprice', db.getSingleFamilyResidencePrice)
+
 // app.get('/incentives', db.getIncentives)
 // app.get('/prefers', db.getPrefers)
 

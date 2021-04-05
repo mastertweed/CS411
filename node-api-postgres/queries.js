@@ -197,8 +197,53 @@ const getStandardDed = (request, response) => {
 
 // HOUSING Functions
 //
-const getHousing = (request, response) => {
-  pool.query('SELECT * FROM housing ORDER BY county_id ASC', (error, results) => {
+const getOneBedroomPrice = (request, response) => {
+  pool.query('SELECT * FROM onebedroomprice', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+const getTwoBedroomPrice = (request, response) => {
+  pool.query('SELECT * FROM twobedroomprice', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+const getThreeBedroomPrice = (request, response) => {
+  pool.query('SELECT * FROM threebedroomprice', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+const getFourBedroomPrice = (request, response) => {
+  pool.query('SELECT * FROM fourbedroomprice', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+const getFiveMoreBedroomPrice = (request, response) => {
+  pool.query('SELECT * FROM fiveormorebedroomprice', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+const getSingleFamilyResidencePrice = (request, response) => {
+  pool.query('SELECT * FROM singlefamilyresidenceprice', (error, results) => {
     if (error) {
       throw error
     }
@@ -244,7 +289,12 @@ module.exports = {
   getCensus,
   getIncomeTax,
   getStandardDed,
-  getHousing,
+  getOneBedroomPrice,
+  getTwoBedroomPrice,
+  getThreeBedroomPrice,
+  getFourBedroomPrice,
+  getFiveMoreBedroomPrice,
+  getSingleFamilyResidencePrice,
   getIncentives,
   getPrefers
 }
