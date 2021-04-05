@@ -2,7 +2,18 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 const db = require('./queries')
-// const port = 3000
+
+const mongodb = require('mongodb')
+const connectionString = "mongodb+srv://mongo:mongopassword@cluster0.eyazr.mongodb.net/db?retryWrites=true&w=majority";
+let mdb
+mongodb.connect(
+  connectionString,
+  { useNewUrlParser: true, useUnifiedTopology:true },
+  function (err, client) {
+    mdb = client.db();
+  }
+)
+
 
 const normalizePort = val => {
   var port = parseInt(val, 10);
@@ -45,6 +56,14 @@ app.use(
 
 app.get('/', (request, response) => {
   response.json({ info: 'Node.js, Express, and Postgres API' })
+})
+
+app.get('/incentives', function(req, res) {
+  mdb.collection('incentives')
+       .find({})
+       .toArray(function (err, items) {
+       res.send(items)
+       })
 })
 
 app.get('/users', db.getUsers)
