@@ -50,7 +50,7 @@ app.use((req, res, next) => {
 app.use(bodyParser.json())
 app.use(
   bodyParser.urlencoded({
-    extended: true,
+    extended: false,
   })
 )
 
@@ -91,6 +91,38 @@ app.get('/threebedroomprice', db.getThreeBedroomPrice)
 app.get('/fourbedroomprice', db.getFourBedroomPrice)
 app.get('/fivemorebedroomprice', db.getFiveMoreBedroomPrice)
 app.get('/singlefamilyresidenceprice', db.getSingleFamilyResidencePrice)
+
+
+app.get('/incentives', function(req, res) {
+   mdb.collection('incentives')
+        .aggregate([ {$project:{"_id":0, "country":0, "min_value":0, "max_value":0}}])
+        .toArray(function (err, items) {
+        // console.log(items)
+        res.send(items)
+
+        })
+})
+
+app.post('/incentives', function(req, res) {
+   // console.log("#####################");
+   // console.log(req.body);
+   let inputArgs = req.body;
+   let deleteIncentive = inputArgs.del;
+
+   if (deleteIncentive) {
+        let state = inputArgs.State;
+        let city = inputArgs.City;
+        let query = { State:state, City:city };
+        // console.log(query);
+        mdb.collection("incentives").deleteMany(query, function(err, obj) {
+            if (err) throw err;
+            console.log(obj.result.n + " document(s) deleted");
+        });
+   } else {
+      mdb.collection('incentives').insertOne(req.body)
+   }
+})
+
 
 // app.get('/incentives', db.getIncentives)
 // app.get('/prefers', db.getPrefers)

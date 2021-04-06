@@ -1,14 +1,32 @@
 const Pool = require('pg').Pool
 const pool = new Pool({
   user: 'postgres',
-//  host: 'cs411-postgres-1.cwg7ctu1vqsd.us-east-1.rds.amazonaws.com',
-//  database: 'postgres',
-//  password: 'postgrespassword',
-  host: 'localhost',
-  database: 'api',
-  password: 'password',
+  host: 'cs411-postgres-1.cwg7ctu1vqsd.us-east-1.rds.amazonaws.com',
+  database: 'postgres',
+  password: 'postgrespassword',
+//  host: 'localhost',
+//  database: 'api',
+//  password: 'password',
   port: 5432,
 })
+
+
+const getHousingInfoBasedOnPrefs = (request, response) => {
+  const city = request.params.city
+  const state = request.params.state
+  const minPrice = request.params.minPrice
+  const maxPrice = request.params.maxPrice
+  const numBedrooms = request.params.bedrooms
+
+  if (numBedrooms == 2) {
+      pool.query('SELECT * FROM 2BedroomPrice WHERE City = city && State = state && Price >= minPrice && Price <= maxPrice ORDER BY Price ASC', (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
+    })
+  }
+}
 
 // USERS Functions
 //
