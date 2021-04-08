@@ -58,14 +58,6 @@ app.get('/', (request, response) => {
   response.json({ info: 'Node.js, Express, and Postgres API' })
 })
 
-app.get('/incentives', function(req, res) {
-  mdb.collection('incentives')
-       .find({})
-       .toArray(function (err, items) {
-       res.send(items)
-       })
-})
-
 app.get('/users', db.getUsers)
 app.get('/users/:email', db.getUserByEmail)
 app.post('/users', db.createUser)
@@ -122,6 +114,8 @@ app.post('/incentives', function(req, res) {
       mdb.collection('incentives').insertOne(req.body)
    }
 })
+
+app.get('/result', db.getPreferredResult)
 
 
 // app.get('/incentives', db.getIncentives)

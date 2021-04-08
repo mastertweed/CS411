@@ -10,22 +10,112 @@ const pool = new Pool({
   port: 5432,
 })
 
+const url = require('url')
 
-const getHousingInfoBasedOnPrefs = (request, response) => {
-  const city = request.params.city
-  const state = request.params.state
-  const minPrice = request.params.minPrice
-  const maxPrice = request.params.maxPrice
-  const numBedrooms = request.params.bedrooms
+const getPreferredResult = async (request, response) => {
+  const queryObject = url.parse(request.url,true).query;
+//   console.log(queryObject);
 
-  if (numBedrooms == 2) {
-      pool.query('SELECT * FROM 2BedroomPrice WHERE City = city && State = state && Price >= minPrice && Price <= maxPrice ORDER BY Price ASC', (error, results) => {
-      if (error) {
-        throw error
-      }
-      response.status(200).json(results.rows)
-    })
+  city = '%'
+  if (queryObject.city) {
+    city = queryObject.city
   }
+
+  state = '%'
+  if (queryObject.state) {
+    state = queryObject.state
+  }
+
+  mintemp = -100
+  if (queryObject.mintemp) {
+    mintemp = queryObject.mintemp
+  }
+
+  maxtemp = 500
+  if (queryObject.maxtemp) {
+    maxtemp = queryObject.maxtemp
+  }
+
+  minprice = 0
+  if (queryObject.minprice) {
+    minprice = queryObject.minprice
+  }
+
+  maxprice = 100000000
+  if (queryObject.maxprice) {
+    maxprice = queryObject.maxprice
+  }
+
+  onebedroom = 1
+  if (queryObject.onebed) {
+    onebedroom = queryObject.onebed
+  }
+  twobedroom = 1
+  if (queryObject.twobed) {
+    twobedroom = queryObject.twobed
+  }
+  threebedroom = 1
+  if (queryObject.threebed) {
+    threebedroom = queryObject.threebed
+  }
+  fourbedroom = 1
+  if (queryObject.fourbed) {
+    fourbedroom = queryObject.fourbed
+  }
+  fiveormorebedroom = 1
+  if (queryObject.fiveplusbed) {
+    fiveormorebedroom = queryObject.fiveplusbed
+  }
+  singlefamilyresidence = 1
+  if (queryObject.singlefamily) {
+    singlefamilyresidence = queryObject.singlefamily
+  }
+
+  if (onebedroom) {
+      results = await pool.query('SELECT * FROM onebedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
+      for (var i = 0; i < results.rows.length; i++) { 
+  	results.rows[i]["type"] = "One-Bedroom" 
+      }
+      final = results.rows
+  }
+
+  if (twobedroom) {
+      results = await pool.query('SELECT * FROM twobedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
+      for (var i = 0; i < results.rows.length; i++) { 
+  	results.rows[i]["type"] = "Two-Bedrooms" 
+      }
+      final = final.concat(results.rows)
+  }
+
+  if (threebedroom) {
+      results = await pool.query('SELECT * FROM threebedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
+      for (var i = 0; i < results.rows.length; i++) { 
+  	results.rows[i]["type"] = "Three-Bedrooms" 
+      }
+      final = final.concat(results.rows)
+  }
+  if (fourbedroom) {
+      results = await pool.query('SELECT * FROM fourbedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
+      for (var i = 0; i < results.rows.length; i++) { 
+  	results.rows[i]["type"] = "Four-Bedrooms" 
+      }
+      final = final.concat(results.rows)
+  }
+  if (fiveormorebedroom) {
+      results = await pool.query('SELECT * FROM fiveormorebedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
+      for (var i = 0; i < results.rows.length; i++) { 
+  	results.rows[i]["type"] = "FiveOrMore-Bedrooms" 
+      }
+      final = final.concat(results.rows)
+  }
+  if (singlefamilyresidence) {
+      results = await pool.query('SELECT * FROM singlefamilyresidenceprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
+      for (var i = 0; i < results.rows.length; i++) { 
+  	results.rows[i]["type"] = "Single Family" 
+      }
+      final = final.concat(results.rows)
+  }
+  response.status(200).json(final)
 }
 
 // USERS Functions
@@ -314,5 +404,6 @@ module.exports = {
   getFiveMoreBedroomPrice,
   getSingleFamilyResidencePrice,
   getIncentives,
-  getPrefers
+  getPrefers,
+  getPreferredResult
 }
