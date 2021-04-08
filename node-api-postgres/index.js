@@ -115,7 +115,7 @@ app.post('/incentives', function(req, res) {
    }
 })
 
-app.get('/result', db.getPreferredResult)
+app.get('/preference/results', db.getPreferredResult)
 
 
 // app.get('/incentives', db.getIncentives)
