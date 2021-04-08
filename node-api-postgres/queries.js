@@ -190,16 +190,13 @@ const getUserInfo = (request, response) => {
 }
 
 const createUserInfo = (request, response) => {
-  const { email, maxdist, maxcost, avgcost, avgage, bedrooms1, bedrooms2, bedrooms3, bedrooms4, bedrooms5, bedrooms6, mintemp, maxtemp } = request.body
+  const { email, firstname, lastname, city, state, zipcode } = request.body
 
-  pool.query('INSERT INTO users(email, maxdist, maxcost, avgcost,' 
-  	  + 'avgage, bedrooms1, bedrooms2, bedrooms3, bedrooms4, bedrooms5,'
-  	  + 'bedrooms6, mintemp, maxtemp) VALUES ($1, $2, $3, $4, $5, $6, $7,'
-  	  + '$8, $9, $10, $11, $12, $13)', [email, maxdist, maxcost, avgcost, avgage, bedrooms1, bedrooms2, bedrooms3, bedrooms4, bedrooms5, bedrooms6, mintemp, maxtemp], (error, results) => {
+  pool.query('INSERT INTO userinfo(email, firstname, lastname, city, state, zipcode) VALUES ($1, $2, $3, $4, $5, $6)', [email, firstname, lastname, city, state, zipcode], (error, results) => {
     if (error) {
       throw error
     }
-    response.status(201).send('User added with Email: ${result.email}')
+    response.status(201).send('User-Info added!')
   })
 }
 

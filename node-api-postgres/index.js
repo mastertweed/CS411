@@ -64,7 +64,7 @@ app.post('/users', db.createUser)
 app.put('/users/:email', db.updateUser)
 app.delete('/users/:email', db.deleteUser)
 
-app.get('/usersinfo', db.getUserInfo)
+app.get('/userinfo', db.getUserInfo)
 app.post('/userinfo', db.createUserInfo)
 
 app.get('/city', db.getCity)
