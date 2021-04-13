@@ -96,12 +96,13 @@ app.get('/incentives', function(req, res) {
 })
 
 app.post('/incentives', function(req, res) {
-   // console.log("#####################");
-   // console.log(req.body);
+   //console.log("#####################");
+   //console.log(req.body);
    let inputArgs = req.body;
-   let deleteIncentive = inputArgs.del;
+   //let deleteIncentive = inputArgs.mode;
+   //let updateIncentive = inputArgs.mode;
 
-   if (deleteIncentive) {
+   if (inputArgs.mode == 1) {
         let state = inputArgs.State;
         let city = inputArgs.City;
         let query = { State:state, City:city };
@@ -110,9 +111,32 @@ app.post('/incentives', function(req, res) {
             if (err) throw err;
             console.log(obj.result.n + " document(s) deleted");
         });
+   } else if(inputArgs.mode == 2){
+	let state = inputArgs.State;
+	let city = inputArgs.City;
+	let des = inputArgs.description;
+	let req = inputArgs.requirements;
+	let query = {State:state, City:city};
+	let update = {$set: {State:state, City:city, description:des, requirements:req}};
+	
+        //let arg1 = JSON.stringify(query);
+	//let arg2 = JSON.stringify(update);	
+
+	//mdb.collection("incentives").update(arg1, arg2, function(err, obj) {
+	//mdb.collection("incentives").update(query, update, function(err, obj) {
+	//mdb.collection("incentives").updateOne({State:state, City:city}, {$set: {description:des, requirements:req}}, {});
+	mdb.collection("incentives").updateOne(query, update, {});
    } else {
       mdb.collection('incentives').insertOne(req.body)
    }
+   mdb.collection('incentives')
+        .aggregate([ {$project:{"_id":0, "country":0, "min_value":0, "max_value":0}}])
+        .toArray(function (err, items) {
+        // console.log(items)
+        res.send(items)
+
+        })
+   
 })
 
 app.get('/preference/results', db.getPreferredResult)

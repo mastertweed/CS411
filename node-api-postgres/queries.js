@@ -14,7 +14,7 @@ const url = require('url')
 
 const getPreferredResult = async (request, response) => {
   const queryObject = url.parse(request.url,true).query;
-//   console.log(queryObject);
+  console.log(queryObject);
 
   city = '%'
   if (queryObject.city) {
@@ -46,31 +46,32 @@ const getPreferredResult = async (request, response) => {
     maxprice = queryObject.maxprice
   }
 
-  onebedroom = 1
+  onebedroom = 0
   if (queryObject.onebed) {
     onebedroom = queryObject.onebed
   }
-  twobedroom = 1
+  twobedroom = 0
   if (queryObject.twobed) {
     twobedroom = queryObject.twobed
   }
-  threebedroom = 1
+  threebedroom = 0
   if (queryObject.threebed) {
     threebedroom = queryObject.threebed
   }
-  fourbedroom = 1
+  fourbedroom = 0
   if (queryObject.fourbed) {
     fourbedroom = queryObject.fourbed
   }
-  fiveormorebedroom = 1
+  fiveormorebedroom = 0
   if (queryObject.fiveplusbed) {
     fiveormorebedroom = queryObject.fiveplusbed
   }
-  singlefamilyresidence = 1
+  singlefamilyresidence = 0
   if (queryObject.singlefamily) {
     singlefamilyresidence = queryObject.singlefamily
   }
 
+  final = ""
   if (onebedroom) {
       results = await pool.query('SELECT * FROM onebedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
       for (var i = 0; i < results.rows.length; i++) { 
@@ -84,7 +85,11 @@ const getPreferredResult = async (request, response) => {
       for (var i = 0; i < results.rows.length; i++) { 
   	results.rows[i]["type"] = "Two-Bedrooms" 
       }
-      final = final.concat(results.rows)
+      if ( final == "" ) {
+	final = results.rows
+      } else {
+        final = final.concat(results.rows)
+      }
   }
 
   if (threebedroom) {
@@ -92,28 +97,44 @@ const getPreferredResult = async (request, response) => {
       for (var i = 0; i < results.rows.length; i++) { 
   	results.rows[i]["type"] = "Three-Bedrooms" 
       }
-      final = final.concat(results.rows)
+      if ( final == "" ) {
+	final = results.rows
+      } else {
+        final = final.concat(results.rows)
+      }
   }
   if (fourbedroom) {
       results = await pool.query('SELECT * FROM fourbedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
       for (var i = 0; i < results.rows.length; i++) { 
   	results.rows[i]["type"] = "Four-Bedrooms" 
       }
-      final = final.concat(results.rows)
+      if ( final == "" ) {
+	final = results.rows
+      } else {
+        final = final.concat(results.rows)
+      }
   }
   if (fiveormorebedroom) {
       results = await pool.query('SELECT * FROM fiveormorebedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
       for (var i = 0; i < results.rows.length; i++) { 
   	results.rows[i]["type"] = "FiveOrMore-Bedrooms" 
       }
-      final = final.concat(results.rows)
+      if ( final == "" ) {
+	final = results.rows
+      } else {
+        final = final.concat(results.rows)
+      }
   }
   if (singlefamilyresidence) {
       results = await pool.query('SELECT * FROM singlefamilyresidenceprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
       for (var i = 0; i < results.rows.length; i++) { 
   	results.rows[i]["type"] = "Single Family" 
       }
-      final = final.concat(results.rows)
+      if ( final == "" ) {
+	final = results.rows
+      } else {
+        final = final.concat(results.rows)
+      }
   }
   response.status(200).json(final)
 }
