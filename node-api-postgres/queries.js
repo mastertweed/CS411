@@ -232,6 +232,16 @@ const getUserPreference = (request, response) => {
   })
 }
 
+const getUserPreferenceByEmail = (request, response) => {
+  const email = request.params.email
+
+  pool.query('SELECT * FROM userpreference WHERE email = $1', [email], (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
 
 // CITY Functions
 //
@@ -248,6 +258,17 @@ const getCity = (request, response) => {
 //
 const getZipCodes = (request, response) => {
   pool.query('SELECT * FROM zipcodes', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+const getZipCodesByZip = (request, response) => {
+  const zip = parseInt(request.params.zip)
+
+  pool.query('SELECT * FROM zipcodes WHERE zip = $1', [zip], (error, results) => {
     if (error) {
       throw error
     }
@@ -277,6 +298,17 @@ const getTemperature = (request, response) => {
   })
 }
 
+const getTemperatureByCity = (request, response) => {
+  const city = request.params.city
+
+  pool.query('SELECT * FROM temperature WHERE city = $1', [city], (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
 // RAINFALL Functions
 //
 const getRainfall = (request, response) => {
@@ -288,10 +320,33 @@ const getRainfall = (request, response) => {
   })
 }
 
+const getRainfallByCity = (request, response) => {
+  const city = request.params.city
+
+  pool.query('SELECT * FROM rainfall WHERE city = $1', [city], (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
 // CENSUS Functions
 //
 const getCensus = (request, response) => {
   pool.query('SELECT * FROM census', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+const getCensusByCityState = (request, response) => {
+  const city = request.params.city
+  const state = request.params.state
+
+  pool.query('SELECT * FROM census WHERE city = $1 AND state = $2', [city, state], (error, results) => {
     if (error) {
       throw error
     }
@@ -388,17 +443,6 @@ const getIncentives = (request, response) => {
   })
 }
 
-// PREFERS Functions
-//
-const getPrefers = (request, response) => {
-  pool.query('SELECT * FROM prefers ORDER BY user_id ASC', (error, results) => {
-    if (error) {
-      throw error
-    }
-    response.status(200).json(results.rows)
-  })
-}
-
 module.exports = {
   getUsers,
   getUserByEmail,
@@ -407,12 +451,18 @@ module.exports = {
   deleteUser,
   getUserInfo,
   createUserInfo,
+  getUserPreference,
+  getUserPreferenceByEmail,
   getCity,
   getZipCodes,
+  getZipCodesByZip,
   getStates,
   getTemperature,
+  getTemperatureByCity,
   getRainfall,
+  getRainfallByCity,
   getCensus,
+  getCensusByCityState,
   getIncomeTax,
   getStandardDed,
   getOneBedroomPrice,
@@ -422,6 +472,5 @@ module.exports = {
   getFiveMoreBedroomPrice,
   getSingleFamilyResidencePrice,
   getIncentives,
-  getPrefers,
   getPreferredResult
 }

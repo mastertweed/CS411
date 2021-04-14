@@ -14,7 +14,6 @@ mongodb.connect(
   }
 )
 
-
 const normalizePort = val => {
   var port = parseInt(val, 10);
 
@@ -67,13 +66,23 @@ app.delete('/users/:email', db.deleteUser)
 app.get('/userinfo', db.getUserInfo)
 app.post('/userinfo', db.createUserInfo)
 
-app.get('/city', db.getCity)
+app.get('/userpreference', db.getUserPreference)
+app.get('/userpreference/:email', db.getUserPreferenceByEmail)
+
 app.get('/zipcodes', db.getZipCodes)
+app.get('/zipcodes/:zip', db.getZipCodesByZip)
+
 app.get('/states', db.getStates)
+
 app.get('/temperature', db.getTemperature)
+app.get('/temperature/:city', db.getTemperatureByCity)
+
 app.get('/rainfall', db.getRainfall)
+app.get('/rainfall/:city', db.getRainfallByCity)
 
 app.get('/census', db.getCensus)
+app.get('/census/:city/:state', db.getCensusByCityState)
+
 app.get('/incometax', db.getIncomeTax)
 app.get('/standardded', db.getStandardDed)
 
@@ -84,6 +93,7 @@ app.get('/fourbedroomprice', db.getFourBedroomPrice)
 app.get('/fivemorebedroomprice', db.getFiveMoreBedroomPrice)
 app.get('/singlefamilyresidenceprice', db.getSingleFamilyResidencePrice)
 
+app.get('/preference/results', db.getPreferredResult)
 
 app.get('/incentives', function(req, res) {
    mdb.collection('incentives')
@@ -111,39 +121,37 @@ app.post('/incentives', function(req, res) {
             if (err) throw err;
             console.log(obj.result.n + " document(s) deleted");
         });
-   } else if(inputArgs.mode == 2){
-	let state = inputArgs.State;
-	let city = inputArgs.City;
-	let des = inputArgs.description;
-	let req = inputArgs.requirements;
-	let query = {State:state, City:city};
-	let update = {$set: {State:state, City:city, description:des, requirements:req}};
-	
-        //let arg1 = JSON.stringify(query);
-	//let arg2 = JSON.stringify(update);	
+   } else if(inputArgs.mode == 2) {
 
-	//mdb.collection("incentives").update(arg1, arg2, function(err, obj) {
-	//mdb.collection("incentives").update(query, update, function(err, obj) {
-	//mdb.collection("incentives").updateOne({State:state, City:city}, {$set: {description:des, requirements:req}}, {});
-	mdb.collection("incentives").updateOne(query, update, {});
-   } else {
-      mdb.collection('incentives').insertOne(req.body)
-   }
-   mdb.collection('incentives')
+    let state = inputArgs.State;
+    let city = inputArgs.City;
+    let des = inputArgs.description;
+    let req = inputArgs.requirements;
+    let query = {State:state, City:city};
+    let update = {$set: {State:state, City:city, description:des, requirements:req}};
+	
+    //let arg1 = JSON.stringify(query);
+	  //let arg2 = JSON.stringify(update);	
+
+    //mdb.collection("incentives").update(arg1, arg2, function(err, obj) {
+    //mdb.collection("incentives").update(query, update, function(err, obj) {
+    //mdb.collection("incentives").updateOne({State:state, City:city}, {$set: {description:des, requirements:req}}, {});
+
+    mdb.collection("incentives").updateOne(query, update, {});
+
+  } else {
+
+    mdb.collection('incentives').insertOne(req.body)
+
+  }
+
+  mdb.collection('incentives')
         .aggregate([ {$project:{"_id":0, "country":0, "min_value":0, "max_value":0}}])
         .toArray(function (err, items) {
         // console.log(items)
         res.send(items)
-
         })
-   
 })
-
-app.get('/preference/results', db.getPreferredResult)
-
-
-// app.get('/incentives', db.getIncentives)
-// app.get('/prefers', db.getPrefers)
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)
