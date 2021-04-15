@@ -298,10 +298,11 @@ const getTemperature = (request, response) => {
   })
 }
 
-const getTemperatureByCity = (request, response) => {
-  const city = request.params.city
+const getTemperatureByStateCounty = (request, response) => {
+  const state = request.params.state
+  const county = request.params.county
 
-  pool.query('SELECT * FROM temperature WHERE city = $1', [city], (error, results) => {
+  pool.query('SELECT * FROM temperature WHERE state = $1 AND county = $2', [state, county], (error, results) => {
     if (error) {
       throw error
     }
@@ -458,7 +459,7 @@ module.exports = {
   getZipCodesByZip,
   getStates,
   getTemperature,
-  getTemperatureByCity,
+  getTemperatureByStateCounty,
   getRainfall,
   getRainfallByCity,
   getCensus,

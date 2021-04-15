@@ -75,7 +75,7 @@ app.get('/zipcodes/:zip', db.getZipCodesByZip)
 app.get('/states', db.getStates)
 
 app.get('/temperature', db.getTemperature)
-app.get('/temperature/:city', db.getTemperatureByCity)
+app.get('/temperature/:state/:county', db.getTemperatureByStateCounty)
 
 app.get('/rainfall', db.getRainfall)
 app.get('/rainfall/:city', db.getRainfallByCity)
