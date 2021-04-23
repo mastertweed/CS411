@@ -60,7 +60,7 @@ app.use((req, res, next) => {
     );
     res.setHeader(
         'Access-Control-Allow-Methods',
-        'GET, POST, PATACH, DELETE, OPTIONS'
+        'GET, POST, PATCH, DELETE, OPTIONS'
     );
     next();
 });

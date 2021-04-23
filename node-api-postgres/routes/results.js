@@ -5,7 +5,8 @@ const url = require('url')
 
 // RESULTS FUNCTIONS
 //
-const getPreferredResult = async(request, response) => {
+const getPreferredResult = async (request, response) => {
+    // Save all params
     const queryObject = url.parse(request.url, true).query;
     console.log(queryObject);
 
@@ -64,73 +65,123 @@ const getPreferredResult = async(request, response) => {
         singlefamilyresidence = queryObject.singlefamily
     }
 
+    // db.query('SELECT * FROM onebedroomprice', (err, results) => {
+    //     if (err) {
+    //         throw err
+    //     }
+    //     response.status(200).json(results.rows)
+    // })
+
+
+    // Begin querying each housing table
     final = ""
     if (onebedroom) {
-        results = await db.query('SELECT * FROM onebedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
-        for (var i = 0; i < results.rows.length; i++) {
-            results.rows[i]["type"] = "One-Bedroom"
-        }
-        final = results.rows
-    }
+        await db.query('SELECT * FROM onebedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', 
+        [state, city, minprice, maxprice], 
+        (err, results) => {
+            if (err) {
+                throw err
+            }
+            for (var i = 0; i < results.rows.length; i++) {
+                results.rows[i]["type"] = "One-Bedroom"
+            }
+            final = results.rows
+            response.status(200).json(final)
+        })
+    }    
 
-    if (twobedroom) {
-        results = await db.query('SELECT * FROM twobedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
-        for (var i = 0; i < results.rows.length; i++) {
-            results.rows[i]["type"] = "Two-Bedrooms"
-        }
-        if (final == "") {
-            final = results.rows
-        } else {
-            final = final.concat(results.rows)
-        }
-    }
+    // if (twobedroom) {
+    //     results = await db.query('SELECT * FROM twobedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', 
+    //     [state, city, minprice, maxprice], 
+    //     (err) => {
+    //         if (err) {
+    //             throw err
+    //         }
+    //         for (var i = 0; i < results.rows.length; i++) {
+    //             results.rows[i]["type"] = "Two-Bedrooms"
+    //         }
+    //         if (final == "") {
+    //             final = results.rows
+    //         } else {
+    //             final = final.concat(results.rows)
+    //         }
+    //     })
+    // }
 
-    if (threebedroom) {
-        results = await db.query('SELECT * FROM threebedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
-        for (var i = 0; i < results.rows.length; i++) {
-            results.rows[i]["type"] = "Three-Bedrooms"
-        }
-        if (final == "") {
-            final = results.rows
-        } else {
-            final = final.concat(results.rows)
-        }
-    }
-    if (fourbedroom) {
-        results = await db.query('SELECT * FROM fourbedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
-        for (var i = 0; i < results.rows.length; i++) {
-            results.rows[i]["type"] = "Four-Bedrooms"
-        }
-        if (final == "") {
-            final = results.rows
-        } else {
-            final = final.concat(results.rows)
-        }
-    }
-    if (fiveormorebedroom) {
-        results = await db.query('SELECT * FROM fiveormorebedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
-        for (var i = 0; i < results.rows.length; i++) {
-            results.rows[i]["type"] = "FiveOrMore-Bedrooms"
-        }
-        if (final == "") {
-            final = results.rows
-        } else {
-            final = final.concat(results.rows)
-        }
-    }
-    if (singlefamilyresidence) {
-        results = await db.query('SELECT * FROM singlefamilyresidenceprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', [state, city, minprice, maxprice])
-        for (var i = 0; i < results.rows.length; i++) {
-            results.rows[i]["type"] = "Single Family"
-        }
-        if (final == "") {
-            final = results.rows
-        } else {
-            final = final.concat(results.rows)
-        }
-    }
-    response.status(200).json(final)
+    // if (threebedroom) {
+    //     results = await db.query('SELECT * FROM threebedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', 
+    //     [state, city, minprice, maxprice], 
+    //     (err, results) => {
+    //         if (err) {
+    //             throw err
+    //         }
+    //         for (var i = 0; i < results.rows.length; i++) {
+    //             results.rows[i]["type"] = "Three-Bedrooms"
+    //         }
+    //         if (final == "") {
+    //             final = results.rows
+    //         } else {
+    //             final = final.concat(results.rows)
+    //         }
+    //     })
+    // }
+
+    // if (fourbedroom) {
+    //     results = await db.query('SELECT * FROM fourbedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', 
+    //     [state, city, minprice, maxprice], 
+    //     (err, results) => {
+    //         if (err) {
+    //             throw err
+    //         }
+    //         for (var i = 0; i < results.rows.length; i++) {
+    //             results.rows[i]["type"] = "Four-Bedrooms"
+    //         }
+    //         if (final == "") {
+    //             final = results.rows
+    //         } else {
+    //             final = final.concat(results.rows)
+    //         }
+    //     })
+    // }
+
+    // if (fiveormorebedroom) {
+    //     results = await db.query('SELECT * FROM fiveormorebedroomprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', 
+    //     [state, city, minprice, maxprice], 
+    //     (err, results) => {
+    //         if (err) {
+    //             throw err
+    //         }
+    //         for (var i = 0; i < results.rows.length; i++) {
+    //             results.rows[i]["type"] = "FiveorMore-Bedrooms"
+    //         }
+    //         if (final == "") {
+    //             final = results.rows
+    //         } else {
+    //             final = final.concat(results.rows)
+    //         }
+    //     })
+    // }
+
+    // if (singlefamilyresidence) {
+    //     results = await db.query('SELECT * FROM singlefamilyresidenceprice WHERE state LIKE $1 AND city LIKE $2 AND price > $3 AND price < $4', 
+    //     [state, city, minprice, maxprice], 
+    //     (err, results) => {
+    //         if (err) {
+    //             throw err
+    //         }
+    //         for (var i = 0; i < results.rows.length; i++) {
+    //             results.rows[i]["type"] = "FiveorMore-Bedrooms"
+    //         }
+    //         if (final == "") {
+    //             final = results.rows
+    //         } else {
+    //             final = final.concat(results.rows)
+    //         }
+    //     })
+    // }
+    // response.status(200).json(final)
 }
+
 
 module.exports = {
     getPreferredResult
