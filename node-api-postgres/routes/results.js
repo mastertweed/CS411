@@ -4,7 +4,7 @@ const url = require('url')
 
 // RESULTS FUNCTIONS
 //
-const getPreferredResult = async (request, response) => {
+const getPreferredResult = (request, response) => {
     // Save all params
     const queryObject = url.parse(request.url, true).query;
     console.log(queryObject);
@@ -132,15 +132,17 @@ const getPreferredResult = async (request, response) => {
             if (err) {
                 throw err
             }
-            console.log(results.rows)
-// Begin Scoring Results
+
+            // Begin Scoring Results
+
             price_range = maxprice - minprice
             for (var i = 0; i < results.rows.length; i++) {
                 price_offset = results.rows[i].price - minprice
                 calculated_score = ( 1 - ( price_offset / price_range ) ) * 100
                 results.rows[i]["score"] = calculated_score
             }
-// End Scoring Results
+
+            // End Scoring Results
             response.status(200).json(results.rows)
         })
 

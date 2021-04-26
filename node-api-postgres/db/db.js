@@ -22,4 +22,8 @@ module.exports = {
             callback(err, res)
         })
     },
+
+    query2: (text, params) => {
+        return pool.query(text, params);
+    },
 }
