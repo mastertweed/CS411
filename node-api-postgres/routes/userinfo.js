@@ -23,8 +23,7 @@ const getUserInfoByEmail = (request, response) => {
 }
 
 const createUserInfo = (request, response) => {
-    const email = request.email
-    const { firstname, lastname, city, state, zipcode } = request.body
+    const { email, firstname, lastname, city, state, zipcode } = request.body
 
     db.query('INSERT INTO userinfo(email, firstname, lastname, city, state, zipcode) VALUES ($1, $2, $3, $4, $5, $6)', [email, firstname, lastname, city, state, zipcode], (err, results) => {
         if (err) {
