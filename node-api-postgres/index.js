@@ -108,7 +108,9 @@ app.get('/temperature', temperatureRoute.getTemperature)
 app.get('/temperature/:state/:county', temperatureRoute.getTemperatureByStateCounty)
 
 app.get('/userinfo', [authenticationRoute.authenticateUser, userinfoRoute.getUserInfo]) // Restricted
+app.get('/userinfo/:email', [authenticationRoute.authenticateUser, userinfoRoute.getUserInfoByEmail]) // Restricted
 app.post('/userinfo', [authenticationRoute.authenticateUser, userinfoRoute.createUserInfo]) // Restricted
+app.post('/userinfo/:email', [authenticationRoute.authenticateUser, userinfoRoute.updateUserInfo]) // Restricted
 
 app.get('/userpreference', userpreferenceRoute.getUserPreference)
 app.get('/userpreference/:email', userpreferenceRoute.getUserPreferenceByEmail)
