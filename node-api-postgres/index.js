@@ -108,9 +108,12 @@ app.get('/temperature', temperatureRoute.getTemperature)
 app.get('/temperature/:state/:county', temperatureRoute.getTemperatureByStateCounty)
 
 app.get('/userinfo', [authenticationRoute.authenticateUser, userinfoRoute.getUserInfo]) // Restricted
-app.get('/userinfo/:email', [authenticationRoute.authenticateUser, userinfoRoute.getUserInfoByEmail]) // Restricted
-app.post('/userinfo', [authenticationRoute.authenticateUser, userinfoRoute.createUserInfo]) // Restricted
-app.post('/userinfo/:email', [authenticationRoute.authenticateUser, userinfoRoute.updateUserInfo]) // Restricted
+app.get('/userinfo/:email', userinfoRoute.getUserInfoByEmail)
+app.post('/userinfo', userinfoRoute.createUserInfo)
+app.post('/userinfo/:email', userinfoRoute.updateUserInfo)
+// app.post('/userinfo', [authenticationRoute.authenticateUser, userinfoRoute.createUserInfo]) // Restricted
+// app.post('/userinfo/:email', [authenticationRoute.authenticateUser, userinfoRoute.updateUserInfo]) // Restricted
+// app.get('/userinfo/:email', [authenticationRoute.authenticateUser, userinfoRoute.getUserInfoByEmail]) // Restricted
 
 app.get('/userpreference', userpreferenceRoute.getUserPreference)
 app.get('/userpreference/:email', userpreferenceRoute.getUserPreferenceByEmail)
@@ -120,7 +123,8 @@ app.post('/users', usersRoute.createUser)
 app.put('/users', [authenticationRoute.authenticateUser, usersRoute.updateCurrentUser]) // Restricted
 app.delete('/users', [authenticationRoute.authenticateUser, usersRoute.deleteCurrentUser]) // Restricted
 
-app.get('/users/:email', [authenticationRoute.authenticateUser, usersRoute.getUserByEmail]) // Restricted (admin)
+app.get('/users/:email', usersRoute.getUserByEmail)
+// app.get('/users/:email', [authenticationRoute.authenticateUser, usersRoute.getUserByEmail]) // Restricted (admin)
 app.put('/users/:email', [authenticationRoute.authenticateUser, usersRoute.updateUser]) // Restricted (admin)
 app.delete('/users/:email', [authenticationRoute.authenticateUser, usersRoute.deleteUser]) // Restricted (admin)
 
