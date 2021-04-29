@@ -39,6 +39,25 @@ const getPreferredResult = (request, response) => {
         maxprice = queryObject.maxprice
     }
 
+    zipcode = ''
+    console.log("before zip query")
+    if (queryObject.zipcode) {
+	zipcode = queryObject.zipcode
+        db.query('SELECT * FROM zipcodes WHERE zip = $1', [zipcode], (err, results) => {
+            if (err) {
+                throw err
+            }
+            inLat = results.rows[0].latitude
+            inLon = results.rows[0].longitude
+            console.log("Zipcode,lat,lon: ", zipcode, inLat, inLon)
+        })
+        console.log("after zip query")
+    }
+    max_dist = 0
+    if (queryObject.max_distance) {
+	max_dist = queryObject.max_distance
+    }
+
     onebedroom = 0
     if (queryObject.onebed) {
         onebedroom = queryObject.onebed
@@ -64,21 +83,32 @@ const getPreferredResult = (request, response) => {
         singlefamilyresidence = queryObject.singlefamily
     }
 
+   console.log("City", city)
+   console.log("State", state)
+   console.log("Min Price", minprice)
+   console.log("Max Price", maxprice)
+   console.log("Min temp", mintemp)
+   console.log("Max temp", maxtemp)
+   console.log("Zip Code", zipcode)
+   console.log("Max Dist", max_dist)
+
     // $1 = state, $2 = city, $3 = minprice, $4 = maxprice, $5 = mintemp, $6 = maxtemp
     // $7 = onebed, $8 = twobed, $9 = threebed, $10 = fourbed, $11 = fivebed, $12 = singlefamily
     db.query(
 	'(SELECT A.state, A.county, A.city, \'One-Bedroom\' AS HouseType, A.price, ' +
-	        'C.median_age, C.mean_earnings, C.per_capita_income, T.avg_f AS avg_temp ' + 
+              'C.latitude, C.longitude,C.median_age, C.mean_earnings, C.per_capita_income, T.avg_f AS avg_temp ' + 
+//              'C.median_age, C.mean_earnings, C.per_capita_income, C.latitude, C.longitude, T.avg_f AS avg_temp ' +
          'FROM onebedroomprice AS A, census AS C, Temperature AS T ' +
+//         'FROM onebedroomprice AS A, census AS C, Temperature AS T, zipcodes AS Z ' +
 	 'WHERE A.state LIKE $1 AND A.city LIKE $2 AND A.price > $3 AND A.price < $4 ' +
                'AND C.city = A.city AND C.state = A.state ' +
 	       'AND T.county = A.county AND T.state = A.state ' +
                'AND T.avg_f > $5 AND T.avg_f < $6 AND $7 = 1) ' +
-
+//               'AND Z.city = A.city AND Z.state = A.state ' +
      'UNION ' +
 
 	'(SELECT A.state, A.county, A.city, \'Two-Bedroom\' AS HouseType, A.price, ' +
-                'C.median_age, C.mean_earnings, C.per_capita_income, T.avg_f AS avg_temp ' +
+                'C.latitude, C.longitude, C.median_age, C.mean_earnings, C.per_capita_income, T.avg_f AS avg_temp ' +
          'FROM twobedroomprice AS A, census AS C, Temperature AS T ' +
          'WHERE A.state LIKE $1 AND A.city LIKE $2 AND A.price > $3 AND A.price < $4 ' +
                'AND C.city = A.city AND C.state = A.state ' +
@@ -88,7 +118,7 @@ const getPreferredResult = (request, response) => {
      'UNION ' +
 
 	'(SELECT A.state, A.county, A.city, \'Three-Bedroom\' AS HouseType, A.price, ' +
-                'C.median_age, C.mean_earnings, C.per_capita_income, T.avg_f AS avg_temp ' +
+                'C.latitude, C.longitude, C.median_age, C.mean_earnings, C.per_capita_income, T.avg_f AS avg_temp ' +
          'FROM threebedroomprice AS A, census AS C, Temperature AS T ' +
          'WHERE A.state LIKE $1 AND A.city LIKE $2 AND A.price > $3 AND A.price < $4 ' +
                'AND C.city = A.city AND C.state = A.state ' +
@@ -98,7 +128,7 @@ const getPreferredResult = (request, response) => {
      'UNION ' +
 
 	'(SELECT A.state, A.county, A.city, \'Four-Bedroom\' AS HouseType, A.price, ' +
-                'C.median_age, C.mean_earnings, C.per_capita_income, T.avg_f AS avg_temp ' +
+                'C.latitude, C.longitude, C.median_age, C.mean_earnings, C.per_capita_income, T.avg_f AS avg_temp ' +
          'FROM fourbedroomprice AS A, census AS C, Temperature AS T ' +
          'WHERE A.state LIKE $1 AND A.city LIKE $2 AND A.price > $3 AND A.price < $4 ' +
                'AND C.city = A.city AND C.state = A.state ' +
@@ -108,7 +138,7 @@ const getPreferredResult = (request, response) => {
      'UNION ' +
 
 	'(SELECT A.state, A.county, A.city, \'FivePlus-Bedroom\' AS HouseType, A.price, ' +
-                'C.median_age, C.mean_earnings, C.per_capita_income, T.avg_f AS avg_temp ' +
+                'C.latitude, C.longitude, C.median_age, C.mean_earnings, C.per_capita_income, T.avg_f AS avg_temp ' +
          'FROM fiveormorebedroomprice AS A, census AS C, Temperature AS T ' +
          'WHERE A.state LIKE $1 AND A.city LIKE $2 AND A.price > $3 AND A.price < $4 ' +
                'AND C.city = A.city AND C.state = A.state ' +
@@ -118,7 +148,7 @@ const getPreferredResult = (request, response) => {
      'UNION ' +
 
 	'(SELECT A.state, A.county, A.city, \'SingleFamilyResidence\' AS HouseType, A.price, ' +
-                'C.median_age, C.mean_earnings, C.per_capita_income, T.avg_f AS avg_temp ' +
+                'C.latitude, C.longitude, C.median_age, C.mean_earnings, C.per_capita_income, T.avg_f AS avg_temp ' +
          'FROM singlefamilyresidenceprice AS A, census AS C, Temperature AS T ' +
          'WHERE A.state LIKE $1 AND A.city LIKE $2 AND A.price > $3 AND A.price < $4 ' +
                'AND C.city = A.city AND C.state = A.state ' +
@@ -136,12 +166,28 @@ const getPreferredResult = (request, response) => {
             // Begin Scoring Results
 
             price_range = maxprice - minprice
+            mid_temp = mintemp + ( ( maxtemp - mintemp ) / 2 )
             for (var i = 0; i < results.rows.length; i++) {
-                price_offset = results.rows[i].price - minprice
-                calculated_score = ( 1 - ( price_offset / price_range ) ) * 100
-                results.rows[i]["score"] = calculated_score
+                distance = distanceFromLatLon(results.rows[i].latitude,results.rows[i].longitude,inLat,inLon);
+                if (distance > max_dist) {
+                  results.rows[i]["distance"] = -1
+                  results.rows[i]["score"] = -1 
+                }
+                else {
+                  results.rows[i]["distance"] = distance;
+                  distance_score = 1 - ( distance / max_dist )
+                  price_offset = results.rows[i].price - minprice
+                  price_score = ( 1 - ( price_offset / price_range ) ) * 100
+                  temp_offset = Math.abs(results.rows[i].avg_temp - mid_temp)
+             
+                  temp_score = ( 1 - ( temp_offset / ( mid_temp - mintemp + 0.01) ) ) * 100
+                  calculated_score = (price_score + temp_score + distance_score) / 2
+                  results.rows[i]["score"] = calculated_score
+                }
+//                console.log("row ", i, ": ", results.rows[i])
             }
-
+            results.rows.sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
+            results.rows.splice(10)
             // End Scoring Results
             response.status(200).json(results.rows)
         })
@@ -260,6 +306,23 @@ const getPreferredResult = (request, response) => {
     // response.status(200).json(final)
 }
 
+function distanceFromLatLon(lat1,lon1,lat2,lon2) {
+  var R = 3958.8; 
+  var degLat = deg2rad(lat2-lat1);  // deg2rad below
+  var degLon = deg2rad(lon2-lon1); 
+  var a = 
+    Math.sin(degLat/2) * Math.sin(degLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(degLon/2) * Math.sin(degLon/2)
+    ; 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var d = R * c; 
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180)
+}
 
 module.exports = {
     getPreferredResult
