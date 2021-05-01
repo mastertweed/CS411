@@ -1,6 +1,5 @@
 const db = require('../db/db')
 
-
 // CENSUS Functions
 //
 const getCensus = (request, response) => {

@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 
+
 // const db = require('./db/queries')
 const censusRoute = require('./routes/census')
 const housingRoute = require('./routes/housing')
@@ -16,6 +17,7 @@ const userpreferenceRoute = require('./routes/userpreference')
 const usersRoute = require('./routes/users')
 const zipcodesRoute = require('./routes/zipcodes')
 const authenticationRoute = require('./routes/authentication')
+const detailRoute = require('./routes/details')
 
 const mongodb = require('mongodb')
 const connectionString = "mongodb+srv://mongo:mongopassword@cluster0.eyazr.mongodb.net/db?retryWrites=true&w=majority";
@@ -130,6 +132,8 @@ app.delete('/users/:email', [authenticationRoute.authenticateUser, usersRoute.de
 
 app.get('/zipcodes', zipcodesRoute.getZipCodes)
 app.get('/zipcodes/:zip', zipcodesRoute.getZipCodesByZip)
+
+app.get('/details', detailRoute.getDetails)
 
 // MongoDB
 //
