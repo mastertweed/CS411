@@ -18,20 +18,7 @@ const usersRoute = require('./routes/users')
 const zipcodesRoute = require('./routes/zipcodes')
 const authenticationRoute = require('./routes/authentication')
 const detailRoute = require('./routes/details')
-
-const mongodb = require('mongodb')
-const connectionString = "mongodb+srv://mongo:mongopassword@cluster0.eyazr.mongodb.net/db?retryWrites=true&w=majority";
-let mdb
-mongodb.connect(
-  connectionString,
-  { useNewUrlParser: true, useUnifiedTopology:true },
-  function (err, client) {
-    if (err) {
-      throw err;
-    }
-    mdb = client.db();
-  }
-)
+const incentiveRoute = require('./routes/incentives')
 
 // Set correct port based on enviorment
 const normalizePort = val => {
@@ -137,63 +124,8 @@ app.get('/details', detailRoute.getDetails)
 
 // MongoDB
 //
-app.get('/incentives', function(req, res) {
-    mdb.collection('incentives')
-         .aggregate([ {$project:{"_id":0, "country":0, "min_value":0, "max_value":0}}])
-         .toArray(function (err, items) {
-         // console.log(items)
-         res.send(items)
- 
-         })
- })
- 
- app.post('/incentives', function(req, res) {
-    //console.log("#####################");
-    //console.log(req.body);
-    let inputArgs = req.body;
-    //let deleteIncentive = inputArgs.mode;
-    //let updateIncentive = inputArgs.mode;
- 
-    if (inputArgs.mode == 1) {
-         let state = inputArgs.State;
-         let city = inputArgs.City;
-         let query = { State:state, City:city };
-         // console.log(query);
-         mdb.collection("incentives").deleteMany(query, function(err, obj) {
-             if (err) throw err;
-             console.log(obj.result.n + " document(s) deleted");
-         });
-    } else if(inputArgs.mode == 2) {
- 
-     let state = inputArgs.State;
-     let city = inputArgs.City;
-     let des = inputArgs.description;
-     let req = inputArgs.requirements;
-     let query = {State:state, City:city};
-     let update = {$set: {State:state, City:city, description:des, requirements:req}};
-     
-     //let arg1 = JSON.stringify(query);
-       //let arg2 = JSON.stringify(update);	
- 
-     //mdb.collection("incentives").update(arg1, arg2, function(err, obj) {
-     //mdb.collection("incentives").update(query, update, function(err, obj) {
-     //mdb.collection("incentives").updateOne({State:state, City:city}, {$set: {description:des, requirements:req}}, {});
- 
-     mdb.collection("incentives").updateOne(query, update, {});
- 
-   } else {
- 
-     mdb.collection('incentives').insertOne(req.body)
- 
-   }
- 
-   mdb.collection('incentives')
-         .aggregate([ {$project:{"_id":0, "country":0, "min_value":0, "max_value":0}}])
-         .toArray(function (err, items) {
-         // console.log(items)
-         res.send(items)
-         })
- })
+app.get('/incentives', incentiveRoute.getIncentives)
+app.post('/incentives', incentiveRoute.updateIncentives)
 
 app.listen(port, () => {
     console.log(`App running on port ${port}.`)

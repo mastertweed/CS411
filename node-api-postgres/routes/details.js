@@ -119,7 +119,7 @@ function executeMultipleQueries(request) {
 
   // Res: 9
   promises.push(new Promise(function(resolve,request){
-                db.query('SELECT avg_f AS average_temp FROM temperature WHERE county = $1 AND state = $2', [county, state], (err, results) => {
+                db.query('SELECT taxrate, bracket_single, bracket_married FROM incometax WHERE stateid = (SELECT stateid FROM states WHERE state_name = \'Oregon\')', (err, results) => {
                         if (err) {
                                 throw err
                         }
@@ -129,16 +129,6 @@ function executeMultipleQueries(request) {
 
   // Res: 10
   promises.push(new Promise(function(resolve,request){
-                db.query('SELECT taxrate, bracket_single, bracket_married FROM incometax WHERE stateid = (SELECT stateid FROM states WHERE state_name = \'Oregon\')', (err, results) => {
-                        if (err) {
-                                throw err
-                        }
-                        resolve(results.rows)
-                });
-        }));
-
-  // Res: 11
-  promises.push(new Promise(function(resolve,request){
                 db.query('SELECT deduction_single, deduction_married FROM standardded WHERE stateid = (SELECT stateid FROM states WHERE state_name = \'Oregon\')', (err, results) => {
                         if (err) {
 				console.log(err)
@@ -147,6 +137,17 @@ function executeMultipleQueries(request) {
                         resolve(results.rows)
                 });
         }));
+
+  // Res: 11
+  promises.push(new Promise(function(resolve,request){
+        var mdb = db.getmdb();
+	mdb.collection('incentives')
+         .aggregate([{$match:{State:state}}, {$project:{"_id":0, "country":0, "min_value":0, "max_value":0,  "State":0, "City":0}}])
+         .toArray(function (err, items) {
+		resolve(items)
+            })
+        }));
+  
 
   return Promise.all(promises)
 }
