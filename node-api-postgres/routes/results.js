@@ -179,9 +179,18 @@ const getPreferredResult = (request, response) => {
                   price_offset = results.rows[i].price - minprice
                   price_score = ( 1 - ( price_offset / price_range ) ) * 100
                   temp_offset = Math.abs(results.rows[i].avg_temp - mid_temp)
-             
+            
                   temp_score = ( 1 - ( temp_offset / ( mid_temp - mintemp + 0.01) ) ) * 100
-                  calculated_score = (price_score + temp_score + distance_score) / 2
+
+                  //score median_age, 23.3=1 to 72.6=0
+                  age_offset = results.rows[i].median_age - 23.3
+                  age_score = ( 1 - ( age_offset / 49.3 ) ) * 100
+
+                  //score median_earnings, 246996=1 to 39898=0 
+                  earnings_offset = results.rows[i].mean_earnings - 39898
+                  earnings_score = ( earnings_offset / 207098 ) * 100 
+
+                  calculated_score = (price_score + temp_score + distance_score + age_score + earnings_score) / 4
                   results.rows[i]["score"] = calculated_score
                 }
 //                console.log("row ", i, ": ", results.rows[i])

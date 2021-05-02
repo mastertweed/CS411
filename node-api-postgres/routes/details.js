@@ -119,7 +119,7 @@ function executeMultipleQueries(request) {
 
   // Res: 9
   promises.push(new Promise(function(resolve,request){
-                db.query('SELECT taxrate, bracket_single, bracket_married FROM incometax WHERE stateid = (SELECT stateid FROM states WHERE state_name = \'Oregon\')', (err, results) => {
+                db.query('SELECT taxrate, bracket_single, bracket_married FROM incometax WHERE stateid = (SELECT stateid FROM states WHERE state = $1)', [state], (err, results) => {
                         if (err) {
                                 throw err
                         }
@@ -129,7 +129,7 @@ function executeMultipleQueries(request) {
 
   // Res: 10
   promises.push(new Promise(function(resolve,request){
-                db.query('SELECT deduction_single, deduction_married FROM standardded WHERE stateid = (SELECT stateid FROM states WHERE state_name = \'Oregon\')', (err, results) => {
+                db.query('SELECT deduction_single, deduction_married FROM standardded WHERE stateid = (SELECT stateid FROM states WHERE state = $1)', [state], (err, results) => {
                         if (err) {
 				console.log(err)
                                 throw err
