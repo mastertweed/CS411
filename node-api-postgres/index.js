@@ -100,12 +100,15 @@ app.get('/userinfo', [authenticationRoute.authenticateUser, userinfoRoute.getUse
 app.get('/userinfo/:email', userinfoRoute.getUserInfoByEmail)
 app.post('/userinfo', userinfoRoute.createUserInfo)
 app.post('/userinfo/:email', userinfoRoute.updateUserInfo)
+
 // app.post('/userinfo', [authenticationRoute.authenticateUser, userinfoRoute.createUserInfo]) // Restricted
 // app.post('/userinfo/:email', [authenticationRoute.authenticateUser, userinfoRoute.updateUserInfo]) // Restricted
 // app.get('/userinfo/:email', [authenticationRoute.authenticateUser, userinfoRoute.getUserInfoByEmail]) // Restricted
 
-app.get('/userpreference', userpreferenceRoute.getUserPreference)
+app.get('/userpreference/update', userpreferenceRoute.updateUserPreferenceByEmail)
+app.get('/userpreference/create', userpreferenceRoute.createUserPreferenceByEmail)
 app.get('/userpreference/:email', userpreferenceRoute.getUserPreferenceByEmail)
+app.get('/userpreference', userpreferenceRoute.getUserPreference)
 
 app.get('/users', usersRoute.getUsers)
 app.post('/users', usersRoute.createUser)
