@@ -13,19 +13,19 @@ const pool = new Pool({
     port: 5432,
 })
 
-const mongodb = require('mongodb')
-const connectionString = "mongodb+srv://mongo:mongopassword@cluster0.eyazr.mongodb.net/db?retryWrites=true&w=majority";
-let mdb
-mongodb.connect(
-  connectionString,
-  { useNewUrlParser: true, useUnifiedTopology:true },
-  function (err, client) {
-    if (err) {
-      throw err;
-    }
-    mdb = client.db();
-  }
-)
+// const mongodb = require('mongodb')
+// const connectionString = "mongodb+srv://mongo:mongopassword@cluster0.eyazr.mongodb.net/db?retryWrites=true&w=majority";
+// let mdb
+// mongodb.connect(
+//   connectionString,
+//   { useNewUrlParser: true, useUnifiedTopology:true },
+//   function (err, client) {
+//     if (err) {
+//       throw err;
+//     }
+//     mdb = client.db();
+//   }
+// )
 
 
 module.exports = {
